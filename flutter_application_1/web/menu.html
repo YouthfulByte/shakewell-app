@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shakewell 菜单</title>
+    <style>
+        body {
+            background-color: #FFF9C4;
+            font-family: -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .menu-container {
+            width: 393px;
+            height: 852px;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            margin: 0 auto;
+            position: relative;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            padding: 20px;
+            background: #FFF9C4;
+            border-bottom: 1px solid #EEE;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        .back-btn {
+            background: #6A1B9A;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(106,27,154,0.3);
+        }
+        .back-btn:hover {
+            background: #5a1880;
+        }
+        .menu-title {
+            font-size: 24px;
+            color: #6A1B9A;
+            text-align: center;
+            flex: 1;
+            margin-left: 10px;
+        }
+        .filter-btn {
+            background: #6A1B9A;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 10px;
+        }
+        .filter-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 30;
+        }
+        .filter-content {
+            background: white;
+            width: 300px;
+            border-radius: 20px;
+            padding: 20px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .filter-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+        .filter-section {
+            margin-bottom: 20px;
+        }
+        .filter-section h3 {
+            color: #6A1B9A;
+            margin-bottom: 10px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .radio-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .radio {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+        .apply-btn {
+            width: 100%;
+            background: #6A1B9A;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .search-container {
+            padding: 0 20px 20px;
+            position: relative;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid #DDD;
+            border-radius: 20px;
+            background: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        .menu-content {
+            padding: 0 20px 20px;
+        }
+        .letter-section {
+            margin-bottom: 30px;
+        }
+        .letter-header {
+            background: #6A1B9A;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #EEE;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-align: center;
+        }
+        .menu-item:hover {
+            transform: scale(1.02);
+            background: #F9F9F9;
+        }
+        .menu-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .menu-name {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .az-index {
+            position: fixed;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            background: rgba(106,27,154,0.1);
+            border-radius: 18px;
+            padding: 10px 0;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .az-btn {
+            background: none;
+            border: none;
+            color: #6A1B9A;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 4px;
+            border-radius: 50%;
+            transition: background 0.2s;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .az-btn:hover {
+            background: #6A1B9A;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-container">
+        <div class="header">
+            <button class="back-btn" onclick="window.close()">←</button>
+            <div class="menu-title" id="title">菜单</div>
+            <button class="filter-btn" onclick="toggleFilter()">Filter</button>
+        </div>
+        <div class="search-container">
+            <div style="position: relative;">
+                <input type="text" class="search-input" placeholder="搜索/过滤..." id="menuSearch" oninput="filterMenu()">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+        <div class="menu-content" id="menuContent">
+            <!-- 动态字母 sections -->
+        </div>
+    </div>
+    <div class="filter-modal" id="filterModal">
+        <div class="filter-content">
+            <div class="filter-header">
+                <h2 style="color: #6A1B9A; margin: 0;">Filters</h2>
+                <button class="filter-close" onclick="toggleFilter()">×</button>
+            </div>
+            <div class="filter-section" id="base-section">
+                <h3>Base Ingredient</h3>
+                <!-- 动态生成 -->
+            </div>
+            <div class="filter-section">
+                <h3>Color</h3>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Transparent" onchange="applyFilter()"> Transparent</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="White" onchange="applyFilter()"> White</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Black" onchange="applyFilter()"> Black</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Brown" onchange="applyFilter()"> Brown</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Yellow" onchange="applyFilter()"> Yellow</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Orange" onchange="applyFilter()"> Orange</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Red" onchange="applyFilter()"> Red</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Pink" onchange="applyFilter()"> Pink</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Multicolor" onchange="applyFilter()"> Multicolor</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Blue" onchange="applyFilter()"> Blue</label>
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="Green" onchange="applyFilter()"> Green</label>
+            </div>
+            <div class="filter-section">
+                <h3>Sort</h3>
+                <label class="radio-item"><input type="radio" name="sort" class="radio" value="A-Z" checked onchange="applyFilter()"> A-Z</label>
+                <label class="radio-item"><input type="radio" name="sort" class="radio" value="Z-A" onchange="applyFilter()"> Z-A</label>
+                <label class="radio-item"><input type="radio" name="sort" class="radio" value="Popularity" onchange="applyFilter()"> Popularity</label>
+            </div>
+            <button class="apply-btn" onclick="toggleFilter()">Apply Filters</button>
+        </div>
+    </div>
+    <div class="az-index" id="azIndex"></div>
+   
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const type = urlParams.get('type') || 'all';
+        let allCocktails = JSON.parse(localStorage.getItem('allCocktails') || '[]');
+        let filtered = [];
+        let currentFilters = { base: [], color: [], sort: 'A-Z' };
+        function getBaseSpirit(ingredient1) {
+            const lower = ingredient1?.toLowerCase() || '';
+            if (lower.includes('gin')) return 'Gin';
+            if (lower.includes('vodka')) return 'Vodka';
+            if (lower.includes('rum')) return 'Rum';
+            if (lower.includes('tequila')) return 'Tequila';
+            if (lower.includes('whiskey') || lower.includes('whisky') || lower.includes('scotch') || lower.includes('bourbon')) return 'Whiskey';
+            if (lower.includes('brandy')) return 'Brandy';
+            if (lower.includes('champagne')) return 'Champagne';
+            return 'Other';
+        }
+        function getColor(drink) {
+            const ings = [];
+            for (let i = 1; i <= 15; i++) {
+                const ing = drink['strIngredient' + i]?.toLowerCase();
+                if (ing) ings.push(ing);
+            }
+            if (ings.some(ing => ing.includes('cranberry') || ing.includes('grenadine'))) return 'Red';
+            if (ings.some(ing => ing.includes('blue curacao'))) return 'Blue';
+            if (ings.some(ing => ing.includes('mint') || ing.includes('lime'))) return 'Green';
+            if (ings.some(ing => ing.includes('orange'))) return 'Orange';
+            if (ings.some(ing => ing.includes('coffee') || ing.includes('chocolate'))) return 'Brown';
+            if (ings.some(ing => ing.includes('milk') || ing.includes('cream'))) return 'White';
+            return 'Transparent';
+        }
+        function initMenu() {
+            if (allCocktails.length === 0) {
+                allCocktails = [
+                    {strDrink: 'Kool-Aid Shot', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/ydpstd1472403539.jpg', idDrink: '178331', strIngredient1: 'Vodka'},
+                    {strDrink: 'Tequila Sour', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/5d6s7m1603709118.jpg', idDrink: '13501', strIngredient1: 'Tequila'},
+                    // 更多 fallback...
+                ];
+            }
+            filtered = allCocktails;
+            document.getElementById('title').textContent = type === 'hot' ? '热门全菜单' : '菜单';
+            renderBaseFilters();
+            renderAZSections();
+            renderAZIndex();
+        }
+        function renderBaseFilters() {
+            const bases = [...new Set(allCocktails.map(drink => getBaseSpirit(drink.strIngredient1)))].sort();
+            const section = document.getElementById('base-section');
+            section.innerHTML = '<h3>Base Ingredient</h3>' + bases.map(base => `
+                <label class="checkbox-item"><input type="checkbox" class="checkbox" value="${base}" onchange="applyFilter()"> ${base}</label>
+            `).join('');
+        }
+        function renderAZSections() {
+            const contentEl = document.getElementById('menuContent');
+            contentEl.innerHTML = '';
+            const grouped = {};
+            filtered.forEach(drink => {
+                const firstLetter = drink.strDrink.charAt(0).toUpperCase();
+                if (!grouped[firstLetter]) grouped[firstLetter] = [];
+                grouped[firstLetter].push(drink);
+            });
+            Object.keys(grouped).sort().forEach(letter => {
+                const section = document.createElement('div');
+                section.className = 'letter-section';
+                section.id = `section-${letter}`;
+                section.innerHTML = `
+                    <div class="letter-header">${letter}</div>
+                    <div class="menu-grid">
+                        ${grouped[letter].map(drink => `
+                            <div class="menu-item" onclick="window.open('detail.html?id=${drink.idDrink}', '_blank')">
+                                <img src="${drink.strDrinkThumb}/small" class="menu-img" alt="${drink.strDrink}">
+                                <div class="menu-name">${drink.strDrink}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                contentEl.appendChild(section);
+            });
+        }
+        function renderAZIndex() {
+            const indexEl = document.getElementById('azIndex');
+            indexEl.innerHTML = '';
+            const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+            letters.forEach(letter => {
+                const btn = document.createElement('button');
+                btn.className = 'az-btn';
+                btn.textContent = letter;
+                btn.onclick = () => scrollToSection(letter);
+                indexEl.appendChild(btn);
+            });
+        }
+        function scrollToSection(letter) {
+            const section = document.getElementById(`section-${letter}`);
+            if (section) section.scrollIntoView({ behavior: 'smooth' });
+        }
+        function filterMenu() {
+            let tempFiltered = allCocktails;
+            const query = document.getElementById('menuSearch').value.toLowerCase();
+            tempFiltered = tempFiltered.filter(drink => drink.strDrink.toLowerCase().includes(query));
+            if (currentFilters.base.length > 0) tempFiltered = tempFiltered.filter(drink => currentFilters.base.includes(getBaseSpirit(drink.strIngredient1)));
+            if (currentFilters.color.length > 0) tempFiltered = tempFiltered.filter(drink => currentFilters.color.includes(getColor(drink)));
+            // Sort
+            if (currentFilters.sort === 'A-Z') {
+                tempFiltered.sort((a, b) => a.strDrink.localeCompare(b.strDrink));
+            } else if (currentFilters.sort === 'Z-A') {
+                tempFiltered.sort((a, b) => b.strDrink.localeCompare(a.strDrink));
+            } else if (currentFilters.sort === 'Popularity') {
+                tempFiltered.sort((a, b) => parseInt(a.idDrink) - parseInt(b.idDrink)); // 低ID更流行
+            }
+            filtered = tempFiltered;
+            renderAZSections();
+        }
+        function applyFilter() {
+            currentFilters.base = Array.from(document.querySelectorAll('#base-section input[type="checkbox"]:checked')).map(cb => cb.value);
+            currentFilters.color = Array.from(document.querySelectorAll('.filter-section:nth-child(2) input[type="checkbox"]:checked')).map(cb => cb.value);
+            currentFilters.sort = document.querySelector('input[name="sort"]:checked')?.value || 'A-Z';
+            filterMenu();
+        }
+        function toggleFilter() {
+            const modal = document.getElementById('filterModal');
+            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
+        }
+        window.onload = initMenu;
+    </script>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shakewell 主界面</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #FFF9C4;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+        .app-container {
+            width: 393px;
+            height: 852px;
+            background-color: #FFF9C4;
+            border: 1px solid #DDD;
+            border-radius: 20px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            background-color: #FFF9C4;
+            padding: 40px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid #EEE;
+            flex-shrink: 0;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #6A1B9A;
+            margin-bottom: 10px;
+        }
+        .greeting {
+            font-size: 18px;
+            color: #6A1B9A;
+            margin-bottom: 20px;
+        }
+        .search-bar {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 40px 12px 16px;
+            border: 1px solid #DDD;
+            border-radius: 20px;
+            background-color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #6A1B9A;
+        }
+        .view-more-btn {
+            font-size: 12px;
+            color: #6A1B9A;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .view-more-btn:hover {
+            text-decoration: underline;
+        }
+        .scroll-container {
+            position: relative;
+        }
+        .scroll-content {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .scroll-content::-webkit-scrollbar {
+            display: none;
+        }
+        .scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255,255,255,0.9);
+            border: 1px solid #DDD;
+            padding: 8px 12px;
+            cursor: pointer;
+            z-index: 10;
+            font-size: 18px;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .scroll-btn:hover {
+            background-color: rgba(255,255,255,1);
+        }
+        .left-btn {
+            left: 5px;
+        }
+        .right-btn {
+            right: 5px;
+        }
+        .card {
+            flex: 0 0 120px;
+            background-color: white;
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #EEE;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .card:hover {
+            transform: scale(1.05);
+        }
+        .card img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
+        .name {
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .hot-section, .recommend-section, .recent-section {
+            padding: 0 20px 20px;
+            flex-shrink: 0;
+        }
+        .categories {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            padding: 0 20px 20px;
+        }
+        .category-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #EEE;
+            height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .category-card:hover {
+            transform: scale(1.02);
+        }
+        .category-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        .category-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .top50-section {
+            padding: 20px;
+            background-color: white;
+            border-radius: 12px;
+            margin: 0 20px 20px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .top50-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .top50-card {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #EEE;
+            border-radius: 8px;
+        }
+        .top50-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .top50-info {
+            flex: 1;
+        }
+        .top50-name {
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .top50-desc {
+            font-size: 14px;
+            color: #666;
+        }
+        .bottom-nav {
+            position: sticky;
+            bottom: 0;
+            width: 100%;
+            background-color: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #EEE;
+            flex-shrink: 0;
+        }
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+        .nav-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        .nav-active {
+            color: #6A1B9A;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <div class="title">Shakewell 🥂</div>
+            <div class="greeting">Hi Eric！今天想调什么？</div>
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索酒名、材料..." id="searchInput" oninput="searchCocktails()">
+                <span class="search-icon">🔍</span>
+            </div>
+        </div>
+        
+        <div class="hot-section" id="hot-section" style="display: block;">
+            <div class="section-header">
+                <div class="section-title">热门</div>
+                <a class="view-more-btn" onclick="showMenu('hot')">View More</a>
+            </div>
+            <div class="scroll-container">
+                <button class="scroll-btn left-btn" onclick="scrollLeftBtn('hot')">&lt;</button>
+                <div class="scroll-content" id="hot-scroll"></div>
+                <button class="scroll-btn right-btn" onclick="scrollRightBtn('hot')">&gt;</button>
+            </div>
+        </div>
+        
+        <div class="recommend-section" id="recommend-section" style="display: block;">
+            <div class="section-header">
+                <div class="section-title">推荐</div>
+                <a class="view-more-btn" onclick="showMenu('recommend')">View More</a>
+            </div>
+            <div class="scroll-container">
+                <button class="scroll-btn left-btn" onclick="scrollLeftBtn('recommend')">&lt;</button>
+                <div class="scroll-content" id="recommend-scroll"></div>
+                <button class="scroll-btn right-btn" onclick="scrollRightBtn('recommend')">&gt;</button>
+            </div>
+        </div>
+        
+        <div class="recent-section" id="recent-section" style="display: block;">
+            <div class="section-header">
+                <div class="section-title">看过的</div>
+                <a class="view-more-btn" onclick="showMenu('recent')">View More</a>
+            </div>
+            <div class="scroll-container">
+                <button class="scroll-btn left-btn" onclick="scrollLeftBtn('recent')">&lt;</button>
+                <div class="scroll-content" id="recent-scroll"></div>
+                <button class="scroll-btn right-btn" onclick="scrollRightBtn('recent')">&gt;</button>
+            </div>
+        </div>
+        
+        <div class="categories">
+            <div class="category-card" onclick="showMenu('tutorial')">
+                <div class="category-icon">📚</div>
+                <div class="category-title">新手教程</div>
+            </div>
+            <div class="category-card" onclick="showMenu('classic')">
+                <div class="category-icon">⭐</div>
+                <div class="category-title">经典爆款</div>
+            </div>
+            <div class="category-card" onclick="showMenu('base')">
+                <div class="category-icon">🍸</div>
+                <div class="category-title">基酒类型</div>
+            </div>
+            <div class="category-card" onclick="showMenu('type')">
+                <div class="category-icon">🥤</div>
+                <div class="category-title">调酒类型</div>
+            </div>
+        </div>
+        
+        <div class="top50-section">
+            <div class="top50-title">全美 Top 50 酒吧</div>
+            <div class="top50-scroll">
+                <div class="top50-card">
+                    <div class="top50-icon">1️⃣</div>
+                    <div class="top50-info">
+                        <div class="top50-name">Paradiso (Barcelona)</div>
+                        <div class="top50-desc">Mediterranean-inspired cocktails & creative presentation</div>
+                    </div>
+                </div>
+                <div class="top50-card">
+                    <div class="top50-icon">2️⃣</div>
+                    <div class="top50-info">
+                        <div class="top50-name">Handshake Speakeasy (New York)</div>
+                        <div class="top50-desc">Hidden gem with innovative drinks</div>
+                    </div>
+                </div>
+                <div class="top50-card">
+                    <div class="top50-icon">3️⃣</div>
+                    <div class="top50-info">
+                        <div class="top50-name">Alquimico (Cartagena)</div>
+                        <div class="top50-desc">Tropical twists on classics</div>
+                    </div>
+                </div>
+                <div class="top50-card">
+                    <div class="top50-icon">4️⃣</div>
+                    <div class="top50-info">
+                        <div class="top50-name">The Connaught Bar (London)</div>
+                        <div class="top50-desc">Elegant martinis and British flair</div>
+                    </div>
+                </div>
+                <div class="top50-card">
+                    <div class="top50-icon">5️⃣</div>
+                    <div class="top50-info">
+                        <div class="top50-name">Licorería Limantour (Mexico City)</div>
+                        <div class="top50-desc">Latin American spirits showcase</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bottom-nav">
+            <div class="nav-item nav-active" onclick="switchNav('discover')">
+                <div class="nav-icon">🏠</div>
+                <div>Discover</div>
+            </div>
+            <div class="nav-item" onclick="switchNav('cocktails')">
+                <div class="nav-icon">🍸</div>
+                <div>Cocktails</div>
+            </div>
+            <div class="nav-item" onclick="switchNav('shopping')">
+                <div class="nav-icon">🛒</div>
+                <div>Shopping</div>
+            </div>
+            <div class="nav-item" onclick="switchNav('profile')">
+                <div class="nav-icon">👤</div>
+                <div>Profile</div>
+            </div>
+            <div class="nav-item" onclick="switchNav('more')">
+                <div class="nav-icon">⋯</div>
+                <div>More</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let allCocktails = JSON.parse(localStorage.getItem('allCocktails') || '[]');
+        const apiKey = '1';
+
+        async function fetchAllCocktails() {
+            if (allCocktails.length > 0) return;
+            const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+            for (let letter of letters) {
+                try {
+                    const url = `https://www.thecocktaildb.com/api/json/v1/${apiKey}/search.php?f=${letter}`;
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        const data = await response.json();
+                        allCocktails = allCocktails.concat(data.drinks || []);
+                        console.log(`Fetched ${data.drinks?.length || 0} for ${letter}`);
+                    }
+                } catch (e) {
+                    console.error(`Error: ${e}`);
+                }
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            localStorage.setItem('allCocktails', JSON.stringify(allCocktails));
+            updateSections();
+            console.log(`Total loaded: ${allCocktails.length}`);
+        }
+
+        function updateSections() {
+            if (allCocktails.length === 0) {
+                const fallback = [
+                    {strDrink: 'Rusty Nail', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/rus6xn1472399631.jpg', idDrink: '11003'},
+                    {strDrink: 'Cuba Libre', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/5d6s7m1603709118.jpg', idDrink: '13501'},
+                    {strDrink: 'Penicillin', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/ydpstd1472403539.jpg', idDrink: '178331'},
+                    {strDrink: 'Funk & Soul', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/4td7j91582466993.jpg', idDrink: '178378'},
+                    {strDrink: 'Hot Chocolate to Die for', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/vrwquq1478252802.jpg', idDrink: '11007'},
+                    {strDrink: 'Abilene', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/l3kruq1643414020.jpg', idDrink: '178338'},
+                    {strDrink: 'Baby Eskimo', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/yyruyw1478252571.jpg', idDrink: '11009'},
+                    {strDrink: 'Lord & Lady', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/6a4n919152437589.jpg', idDrink: '178392'},
+                    {strDrink: 'Quentin', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/7n3c5p1643414020.jpg', idDrink: '178339'},
+                    {strDrink: 'Zipperhead', strDrinkThumb: 'https://www.thecocktaildb.com/images/media/drink/ydpstd1472403539.jpg', idDrink: '178331'}
+                ];
+                allCocktails = fallback;
+            }
+            const hotScroll = document.getElementById('hot-scroll');
+            hotScroll.innerHTML = '';
+            getRandomCocktails(10).forEach(drink => createCard(hotScroll, drink, 'hot'));
+
+            const recommendScroll = document.getElementById('recommend-scroll');
+            recommendScroll.innerHTML = '';
+            getRandomCocktails(10).forEach(drink => createCard(recommendScroll, drink, 'recommend'));
+
+            const recentScroll = document.getElementById('recent-scroll');
+            recentScroll.innerHTML = '';
+            const history = JSON.parse(localStorage.getItem('shakewellHistory') || '[]');
+            if (history.length > 0) {
+                history.slice(0, 10).forEach(drink => createCard(recentScroll, drink, 'recent'));
+            } else {
+                getRandomCocktails(10).forEach(drink => createCard(recentScroll, drink, 'recent'));
+            }
+        }
+
+        function getRandomCocktails(n) {
+            const shuffled = [...allCocktails].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, n);
+        }
+
+        function createCard(container, drink, section) {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${drink.strDrinkThumb}/medium" alt="${drink.strDrink}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjgwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxjaXJjbGUgY3g9IjUwIiBjeT0iNDAiIHI9IjQwIiBmaWxsPSIjRjNGIi8+PHRleHQgeD0iNTUiIHk9IjQ1IiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiM5OTkiPkRyaW5rPC90ZXh0Pjwvc3ZnPg=='">
+                <div class="name">${drink.strDrink || 'Unknown'}</div>
+            `;
+            card.onclick = () => window.open(`detail.html?id=${drink.idDrink}`, '_blank');
+            container.appendChild(card);
+        }
+
+        function scrollLeftBtn(section) {
+            const content = document.getElementById(section + '-scroll');
+            content.scrollBy({ left: -130, behavior: 'smooth' });
+        }
+        function scrollRightBtn(section) {
+            const content = document.getElementById(section + '-scroll');
+            content.scrollBy({ left: 130, behavior: 'smooth' });
+        }
+
+        function searchCocktails() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            if (query.length < 2) return updateSections();
+            const filtered = allCocktails.filter(drink => 
+                drink.strDrink?.toLowerCase().includes(query) || 
+                (drink.strIngredient1 || '').toLowerCase().includes(query)
+            );
+            const hotScroll = document.getElementById('hot-scroll');
+            hotScroll.innerHTML = '';
+            filtered.slice(0, 10).forEach(drink => createCard(hotScroll, drink, 'hot'));
+        }
+
+        function showMenu(type) {
+            const url = `menu.html?type=${type}`;
+            window.open(url, '_blank');
+        }
+
+        function switchNav(tab) {
+            alert(`切换到 ${tab} 页！(未来实现 SPA)`);
+        }
+
+        window.onload = () => {
+            updateSections();
+            fetchAllCocktails();
+        };
+    </script>
+</body>
+</html>
